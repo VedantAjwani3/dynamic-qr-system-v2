@@ -1,51 +1,63 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
 
 <meta charset="UTF-8">
 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>TRL QR Generator</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.6.0/lib/qr-code-styling.js"></script>
 
 <style>
 
 body{
 
-font-family:Arial,Helvetica,sans-serif;
-
-background:#f2f2f2;
+margin:0;
 
 padding:30px;
 
+font-family:Arial,Helvetica,sans-serif;
+
+background:#eef2f7;
+
 }
 
-.box{
-
-background:white;
+.container{
 
 max-width:520px;
 
 margin:auto;
 
+background:#fff;
+
 padding:25px;
 
-border-radius:10px;
+border-radius:12px;
 
-box-shadow:0 0 12px rgba(0,0,0,.2);
+box-shadow:0 0 15px rgba(0,0,0,.15);
 
 text-align:center;
 
 }
 
-.logo{
+h2{
 
-width:130px;
+margin:0;
 
-margin-bottom:15px;
+color:#003366;
+
+}
+
+.subtitle{
+
+margin-top:6px;
+
+margin-bottom:20px;
+
+color:#666;
 
 }
 
@@ -57,25 +69,19 @@ padding:12px;
 
 font-size:18px;
 
-margin-top:15px;
-
 border-radius:6px;
 
-border:1px solid #ccc;
+border:1px solid #bbb;
+
+margin-bottom:15px;
 
 }
 
 button{
 
-padding:12px 22px;
+padding:12px 20px;
 
-margin-top:15px;
-
-font-size:17px;
-
-background:#003366;
-
-color:white;
+font-size:16px;
 
 border:none;
 
@@ -83,9 +89,11 @@ border-radius:6px;
 
 cursor:pointer;
 
-margin-left:5px;
+margin:5px;
 
-margin-right:5px;
+background:#003366;
+
+color:white;
 
 }
 
@@ -95,7 +103,7 @@ background:#0055aa;
 
 }
 
-#qrcode{
+#qrArea{
 
 margin-top:25px;
 
@@ -103,13 +111,13 @@ margin-top:25px;
 
 #empName{
 
-margin-top:15px;
-
-font-size:22px;
+font-size:24px;
 
 font-weight:bold;
 
 color:#003366;
+
+margin-top:15px;
 
 }
 
@@ -117,9 +125,9 @@ color:#003366;
 
 font-size:17px;
 
-color:#666;
+color:#555;
 
-margin-top:6px;
+margin-top:5px;
 
 }
 
@@ -129,19 +137,20 @@ margin-top:6px;
 
 <body>
 
-<div class="box">
-
-<img src="trl-logo.jpg" class="logo">
+<div class="container">
 
 <h2>TRL QR Generator</h2>
 
+<div class="subtitle">
+
+Employee QR Generator
+
+</div>
+
 <input
-
 type="text"
-
 id="empid"
-
-placeholder="Enter Employee ID">
+placeholder="Enter Employee ID (Example: TRL-001)">
 
 <br>
 
@@ -157,7 +166,7 @@ Download QR
 
 </button>
 
-<div id="qrcode"></div>
+<div id="qrArea"></div>
 
 <div id="empName"></div>
 
@@ -169,31 +178,41 @@ Download QR
 
 const sheetURL="https://script.google.com/macros/s/AKfycbz7i_0eSB34jsXN-r8aQurwulksa30ODpaEsM1LDESV4hbon8xEVLkSfVILZtQnTQ1fbA/exec";
 
+let qrCode;
+
 let currentPerson=null;
 
-function generateQR(){
+async function generateQR(){
 
-let id=document.getElementById("empid").value.trim();
+const id=document.getElementById("empid").value.trim();
 
-if(id==""){
+if(id===""){
 
-alert("Enter Employee ID");
+alert("Please enter Employee ID");
 
 return;
 
 }
 
-fetch(sheetURL)
+document.getElementById("qrArea").innerHTML="";
 
-.then(res=>res.json())
+document.getElementById("empName").innerHTML="Loading...";
 
-.then(data=>{
+document.getElementById("empCompany").innerHTML="";
 
-const person=data.find(r=>r.ID===id);
+try{
+
+const response=await fetch(sheetURL);
+
+const data=await response.json();
+
+const person=data.find(r=>String(r.ID).trim().toUpperCase()===id.toUpperCase());
 
 if(!person){
 
 alert("Employee not found");
+
+document.getElementById("empName").innerHTML="";
 
 return;
 
@@ -201,47 +220,71 @@ return;
 
 currentPerson=person;
 
-document.getElementById("qrcode").innerHTML="";
-
-document.getElementById("empName").innerHTML="";
-
-document.getElementById("empCompany").innerHTML="";
-
-let url="https://dynamic-qr-system-v2.vercel.app/profile.html?id="+encodeURIComponent(id);
-
-new QRCode(document.getElementById("qrcode"),{
-
-text:url,
-
-width:250,
-
-height:250
-
-});
-
-setTimeout(function(){
-
-document.getElementById("empName").innerHTML=person.Name || "";
+document.getElementById("empName").innerHTML=person.Name;
 
 document.getElementById("empCompany").innerHTML=person["Company Name"] || "";
 
-},300);
+const qrLink="https://dynamic-qr-system-v2.vercel.app/profile.html?id="+encodeURIComponent(person.ID);
 
-})
+qrCode=new QRCodeStyling({
 
-.catch(function(){
+width:280,
 
-alert("Unable to connect to Google Sheet.");
+height:280,
 
-});
+type:"canvas",
+
+data:qrLink,
+
+margin:5,
+
+dotsOptions:{
+
+color:"#000000",
+
+type:"rounded"
+
+},
+
+backgroundOptions:{
+
+color:"#ffffff"
+
+},
+
+cornersSquareOptions:{
+
+color:"#003366",
+
+type:"extra-rounded"
+
+},
+
+cornersDotOptions:{
+
+color:"#003366"
 
 }
 
+});
 
+qrCode.append(document.getElementById("qrArea"));
 
-function downloadQR(){
+}
 
-    if(currentPerson==null){
+catch(err){
+
+console.error(err);
+
+alert("Unable to connect to Google Sheet.");
+
+}
+
+}
+
+async function downloadQR(){
+
+    if(!qrCode){
 
         alert("Generate QR first.");
 
@@ -249,97 +292,24 @@ function downloadQR(){
 
     }
 
-    let qr=document.querySelector("#qrcode img");
+    if(!currentPerson){
 
-    if(!qr){
-
-        qr=document.querySelector("#qrcode canvas");
-
-    }
-
-    if(!qr){
-
-        alert("QR not generated.");
+        alert("Generate QR first.");
 
         return;
 
     }
 
-    const canvas=document.createElement("canvas");
+    await qrCode.download({
 
-    canvas.width=450;
+        name: currentPerson.ID + "-" + currentPerson.Name,
 
-    canvas.height=620;
+        extension: "png"
 
-    const ctx=canvas.getContext("2d");
-
-    ctx.fillStyle="#ffffff";
-
-    ctx.fillRect(0,0,450,620);
-
-    const logo=new Image();
-
-    logo.onload=function(){
-
-        ctx.drawImage(logo,125,20,200,70);
-
-        ctx.fillStyle="#003366";
-
-        ctx.font="bold 24px Arial";
-
-        ctx.textAlign="center";
-
-        ctx.fillText("TRL Contractor QR",225,120);
-
-        const qrImage=new Image();
-
-        qrImage.onload=function(){
-
-            ctx.drawImage(qrImage,100,150,250,250);
-
-            ctx.fillStyle="#000";
-
-            ctx.font="bold 24px Arial";
-
-            ctx.fillText(currentPerson.Name,225,440);
-
-            ctx.font="18px Arial";
-
-            ctx.fillStyle="#555";
-
-            ctx.fillText(currentPerson["Company Name"]||"",225,470);
-
-            ctx.fillStyle="#003366";
-
-            ctx.font="bold 20px Arial";
-
-            ctx.fillText(currentPerson.ID,225,505);
-
-            const link=document.createElement("a");
-
-            link.download=currentPerson.ID+".png";
-
-            link.href=canvas.toDataURL("image/png");
-
-            link.click();
-
-        };
-
-        if(qr.tagName==="IMG"){
-
-            qrImage.src=qr.src;
-
-        }else{
-
-            qrImage.src=qr.toDataURL("image/png");
-
-        }
-
-    };
-
-    logo.src="trl-logo.jpg";
+    });
 
 }
+
 </script>
 
 </body>
