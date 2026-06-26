@@ -241,102 +241,105 @@ alert("Unable to connect to Google Sheet.");
 
 function downloadQR(){
 
-if(currentPerson==null){
+    if(currentPerson==null){
 
-alert("Generate QR first.");
+        alert("Generate QR first.");
 
-return;
+        return;
+
+    }
+
+    let qr=document.querySelector("#qrcode img");
+
+    if(!qr){
+
+        qr=document.querySelector("#qrcode canvas");
+
+    }
+
+    if(!qr){
+
+        alert("QR not generated.");
+
+        return;
+
+    }
+
+    const canvas=document.createElement("canvas");
+
+    canvas.width=450;
+
+    canvas.height=620;
+
+    const ctx=canvas.getContext("2d");
+
+    ctx.fillStyle="#ffffff";
+
+    ctx.fillRect(0,0,450,620);
+
+    const logo=new Image();
+
+    logo.onload=function(){
+
+        ctx.drawImage(logo,125,20,200,70);
+
+        ctx.fillStyle="#003366";
+
+        ctx.font="bold 24px Arial";
+
+        ctx.textAlign="center";
+
+        ctx.fillText("TRL Contractor QR",225,120);
+
+        const qrImage=new Image();
+
+        qrImage.onload=function(){
+
+            ctx.drawImage(qrImage,100,150,250,250);
+
+            ctx.fillStyle="#000";
+
+            ctx.font="bold 24px Arial";
+
+            ctx.fillText(currentPerson.Name,225,440);
+
+            ctx.font="18px Arial";
+
+            ctx.fillStyle="#555";
+
+            ctx.fillText(currentPerson["Company Name"]||"",225,470);
+
+            ctx.fillStyle="#003366";
+
+            ctx.font="bold 20px Arial";
+
+            ctx.fillText(currentPerson.ID,225,505);
+
+            const link=document.createElement("a");
+
+            link.download=currentPerson.ID+".png";
+
+            link.href=canvas.toDataURL("image/png");
+
+            link.click();
+
+        };
+
+        if(qr.tagName==="IMG"){
+
+            qrImage.src=qr.src;
+
+        }else{
+
+            qrImage.src=qr.toDataURL("image/png");
+
+        }
+
+    };
+
+    logo.src="trl-logo.jpg";
 
 }
-
-const qrCanvas=document.querySelector("#qrcode canvas");
-
-if(!qrCanvas){
-
-alert("QR not generated.");
-
-return;
-
-}
-
-const canvas=document.createElement("canvas");
-
-canvas.width=450;
-
-canvas.height=620;
-
-const ctx=canvas.getContext("2d");
-
-
-
-ctx.fillStyle="white";
-
-ctx.fillRect(0,0,450,620);
-
-
-
-const logo=new Image();
-
-logo.src="trl-logo.jpg";
-
-logo.onload=function(){
-
-
-
-ctx.drawImage(logo,125,20,200,70);
-
-
-
-ctx.fillStyle="#003366";
-
-ctx.font="bold 24px Arial";
-
-ctx.textAlign="center";
-
-ctx.fillText("TRL Contractor QR",225,120);
-
-
-
-ctx.drawImage(qrCanvas,100,150,250,250);
-
-
-
-ctx.fillStyle="#000";
-
-ctx.font="bold 24px Arial";
-
-ctx.fillText(currentPerson.Name,225,435);
-
-
-
-ctx.font="18px Arial";
-
-ctx.fillStyle="#555";
-
-ctx.fillText(currentPerson["Company Name"] || "",225,465);
-
-
-
-ctx.fillStyle="#003366";
-
-ctx.font="bold 20px Arial";
-
-ctx.fillText(currentPerson.ID,225,500);
-
-
-
-const link=document.createElement("a");
-
-link.download=currentPerson.ID+".png";
-
-link.href=canvas.toDataURL("image/png");
-
-link.click();
-
-};
-
-}
-
 </script>
 
 </body>
