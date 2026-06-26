@@ -19,25 +19,23 @@ font-family:Arial,Helvetica,sans-serif;
 
 background:#f2f2f2;
 
-margin:0;
-
-padding:25px;
+padding:30px;
 
 }
 
 .box{
 
+background:white;
+
 max-width:520px;
 
 margin:auto;
-
-background:#fff;
 
 padding:25px;
 
 border-radius:10px;
 
-box-shadow:0 0 12px rgba(0,0,0,.20);
+box-shadow:0 0 12px rgba(0,0,0,.2);
 
 text-align:center;
 
@@ -45,17 +43,9 @@ text-align:center;
 
 .logo{
 
-width:140px;
+width:130px;
 
 margin-bottom:15px;
-
-}
-
-h2{
-
-margin-top:0;
-
-color:#003366;
 
 }
 
@@ -69,17 +59,17 @@ font-size:18px;
 
 margin-top:15px;
 
-border:1px solid #ccc;
-
 border-radius:6px;
+
+border:1px solid #ccc;
 
 }
 
 button{
 
-margin-top:18px;
+padding:12px 22px;
 
-padding:12px 25px;
+margin-top:15px;
 
 font-size:17px;
 
@@ -92,6 +82,10 @@ border:none;
 border-radius:6px;
 
 cursor:pointer;
+
+margin-left:5px;
+
+margin-right:5px;
 
 }
 
@@ -123,9 +117,9 @@ color:#003366;
 
 font-size:17px;
 
-color:#555;
+color:#666;
 
-margin-top:5px;
+margin-top:6px;
 
 }
 
@@ -142,8 +136,11 @@ margin-top:5px;
 <h2>TRL QR Generator</h2>
 
 <input
+
 type="text"
+
 id="empid"
+
 placeholder="Enter Employee ID">
 
 <br>
@@ -154,15 +151,13 @@ Generate QR
 
 </button>
 
-<div id="qrcode"></div>
-
-<br>
-
 <button onclick="downloadQR()">
 
 Download QR
 
 </button>
+
+<div id="qrcode"></div>
 
 <div id="empName"></div>
 
@@ -173,6 +168,8 @@ Download QR
 <script>
 
 const sheetURL="https://script.google.com/macros/s/AKfycbz7i_0eSB34jsXN-r8aQurwulksa30ODpaEsM1LDESV4hbon8xEVLkSfVILZtQnTQ1fbA/exec";
+
+let currentPerson=null;
 
 function generateQR(){
 
@@ -196,11 +193,13 @@ const person=data.find(r=>r.ID===id);
 
 if(!person){
 
-alert("Employee ID not found");
+alert("Employee not found");
 
 return;
 
 }
+
+currentPerson=person;
 
 document.getElementById("qrcode").innerHTML="";
 
@@ -208,20 +207,17 @@ document.getElementById("empName").innerHTML="";
 
 document.getElementById("empCompany").innerHTML="";
 
-let url=
-"https://dynamic-qr-system-v2.vercel.app/profile.html?id="+encodeURIComponent(id);
+let url="https://dynamic-qr-system-v2.vercel.app/profile.html?id="+encodeURIComponent(id);
 
-new QRCode(
-document.getElementById("qrcode"),
-{
+new QRCode(document.getElementById("qrcode"),{
 
 text:url,
 
-width:260,
+width:250,
 
-height:260
-}
-);
+height:250
+
+});
 
 setTimeout(function(){
 
@@ -235,43 +231,109 @@ document.getElementById("empCompany").innerHTML=person["Company Name"] || "";
 
 .catch(function(){
 
-alert("Unable to load data from Google Sheet.");
+alert("Unable to connect to Google Sheet.");
 
 });
 
 }
 
+
+
 function downloadQR(){
 
-    const img=document.querySelector("#qrcode img");
+if(currentPerson==null){
 
-    const canvas=document.querySelector("#qrcode canvas");
+alert("Generate QR first.");
 
-    let source="";
+return;
 
-    if(img){
+}
 
-        source=img.src;
+const qrCanvas=document.querySelector("#qrcode canvas");
 
-    }else if(canvas){
+if(!qrCanvas){
 
-        source=canvas.toDataURL("image/png");
+alert("QR not generated.");
 
-    }else{
+return;
 
-        alert("Generate QR first.");
+}
 
-        return;
+const canvas=document.createElement("canvas");
 
-    }
+canvas.width=450;
 
-    const a=document.createElement("a");
+canvas.height=620;
 
-    a.href=source;
+const ctx=canvas.getContext("2d");
 
-    a.download=document.getElementById("empid").value.trim()+".png";
 
-    a.click();
+
+ctx.fillStyle="white";
+
+ctx.fillRect(0,0,450,620);
+
+
+
+const logo=new Image();
+
+logo.src="trl-logo.jpg";
+
+logo.onload=function(){
+
+
+
+ctx.drawImage(logo,125,20,200,70);
+
+
+
+ctx.fillStyle="#003366";
+
+ctx.font="bold 24px Arial";
+
+ctx.textAlign="center";
+
+ctx.fillText("TRL Contractor QR",225,120);
+
+
+
+ctx.drawImage(qrCanvas,100,150,250,250);
+
+
+
+ctx.fillStyle="#000";
+
+ctx.font="bold 24px Arial";
+
+ctx.fillText(currentPerson.Name,225,435);
+
+
+
+ctx.font="18px Arial";
+
+ctx.fillStyle="#555";
+
+ctx.fillText(currentPerson["Company Name"] || "",225,465);
+
+
+
+ctx.fillStyle="#003366";
+
+ctx.font="bold 20px Arial";
+
+ctx.fillText(currentPerson.ID,225,500);
+
+
+
+const link=document.createElement("a");
+
+link.download=currentPerson.ID+".png";
+
+link.href=canvas.toDataURL("image/png");
+
+link.click();
+
+};
 
 }
 
