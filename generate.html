@@ -156,6 +156,14 @@ Generate QR
 
 <div id="qrcode"></div>
 
+<br>
+
+<button onclick="downloadQR()">
+
+Download QR
+
+</button>
+
 <div id="empName"></div>
 
 <div id="empCompany"></div>
@@ -230,6 +238,40 @@ document.getElementById("empCompany").innerHTML=person["Company Name"] || "";
 alert("Unable to load data from Google Sheet.");
 
 });
+
+}
+
+function downloadQR(){
+
+    const img=document.querySelector("#qrcode img");
+
+    const canvas=document.querySelector("#qrcode canvas");
+
+    let source="";
+
+    if(img){
+
+        source=img.src;
+
+    }else if(canvas){
+
+        source=canvas.toDataURL("image/png");
+
+    }else{
+
+        alert("Generate QR first.");
+
+        return;
+
+    }
+
+    const a=document.createElement("a");
+
+    a.href=source;
+
+    a.download=document.getElementById("empid").value.trim()+".png";
+
+    a.click();
 
 }
 
