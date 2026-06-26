@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>QR Redirect</title>
+</head>
+
+<body>
+
+<script>
+
+const params=new URLSearchParams(window.location.search);
+
+const id=params.get("id");
+
+if(id){
+
+window.location.href="profile.html?id="+encodeURIComponent(id);
+
+}
+else{
+
+document.body.innerHTML="<h2>No Employee ID Found</h2>";
+
+}
+
+</script>
+
+</body>
+
+</html>

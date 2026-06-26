@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRL Contractor Profile</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>TRL Contractor Profile</h1>
+        <p>Employee Information Card</p>
+    </div>
+
+    <div class="card">
+
+        <div class="nameBox">
+            <h2 id="empName">Loading...</h2>
+            <p id="empCompany"></p>
+        </div>
+
+        <!-- BASIC DETAILS -->
+
+        <div class="section">
+
+            <h3>Basic Information</h3>
+
+            <div class="row">
+                <span>ID</span>
+                <span id="id"></span>
+            </div>
+
+            <div class="row">
+                <span>Location</span>
+                <span id="location"></span>
+            </div>
+
+            <div class="row">
+                <span>Address</span>
+                <span id="address"></span>
+            </div>
+
+            <div class="row">
+                <span>GP No</span>
+                <span id="gp"></span>
+            </div>
+
+            <div class="row">
+                <span>Gender</span>
+                <span id="gender"></span>
+            </div>
+
+            <div class="row">
+                <span>Age</span>
+                <span id="age"></span>
+            </div>
+
+        </div>
+
+        <!-- MEDICAL -->
+
+        <div class="section">
+
+            <h3>Medical Details</h3>
+
+            <div class="row">
+                <span>Blood Group</span>
+                <span id="blood"></span>
+            </div>
+
+            <div class="row">
+                <span>Height</span>
+                <span id="height"></span>
+            </div>
+
+            <div class="row">
+                <span>Weight</span>
+                <span id="weight"></span>
+            </div>
+
+            <div class="row">
+                <span>Blood Sugar</span>
+                <span id="sugar"></span>
+            </div>
+
+            <div class="row">
+                <span>Blood Pressure</span>
+                <span id="bp"></span>
+            </div>
+
+            <div class="row">
+                <span>Major Operations</span>
+                <span id="operation"></span>
+            </div>
+
+        </div>
+
+        <!-- EMERGENCY -->
+
+        <div class="section emergency">
+
+            <h3>Emergency Contact</h3>
+
+            <div class="row">
+                <span>Name</span>
+                <span id="emgName"></span>
+            </div>
+
+            <div class="row">
+                <span>Relation</span>
+                <span id="emgRelation"></span>
+            </div>
+
+            <div class="row">
+                <span>Contact</span>
+                <span id="emgNumber"></span>
+            </div>
+
+        </div>
+
+        <!-- SITE -->
+
+        <div class="section">
+
+            <h3>Site Incharge</h3>
+
+            <div class="row">
+                <span>Name</span>
+                <span id="siteName"></span>
+            </div>
+
+            <div class="row">
+                <span>Contact</span>
+                <span id="siteNumber"></span>
+            </div>
+
+        </div>
+
+        <!-- INSURANCE -->
+
+        <div class="section">
+
+            <h3>Insurance</h3>
+
+            <div class="row">
+                <span>Insurance Number</span>
+                <span id="insurance"></span>
+            </div>
+
+            <div class="row">
+                <span>Valid Till</span>
+                <span id="insuranceDate"></span>
+            </div>
+
+        </div>
+
+        <!-- TRAINING -->
+
+        <div class="section">
+
+            <h3>Training Details</h3>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Training</th>
+
+                        <th>Status</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="trainingTable">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

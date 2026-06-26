@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>TRL Dynamic QR System</title>
+
+    <style>
+
+        body{
+            font-family:Arial;
+            background:#f2f2f2;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+        }
+
+        .box{
+
+            background:white;
+            padding:30px;
+            border-radius:10px;
+            box-shadow:0 3px 10px rgba(0,0,0,.2);
+            width:350px;
+            text-align:center;
+
+        }
+
+        input{
+
+            width:100%;
+            padding:12px;
+            margin-top:20px;
+            font-size:16px;
+
+        }
+
+        button{
+
+            margin-top:20px;
+            width:100%;
+            padding:12px;
+            background:#003366;
+            color:white;
+            border:none;
+            cursor:pointer;
+            font-size:16px;
+            border-radius:6px;
+
+        }
+
+        button:hover{
+
+            background:#0055aa;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>TRL Contractor Search</h2>
+
+<input
+type="text"
+id="empid"
+placeholder="Enter Employee ID">
+
+<button onclick="search()">
+
+Search
+
+</button>
+
+</div>
+
+<script>
+
+function search(){
+
+let id=document.getElementById("empid").value.trim();
+
+if(id==""){
+
+alert("Enter Employee ID");
+
+return;
+
+}
+
+window.location.href="profile.html?id="+encodeURIComponent(id);
+
+}
+
+</script>
+
+</body>
+
+</html>
