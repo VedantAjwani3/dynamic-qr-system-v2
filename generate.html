@@ -157,77 +157,6 @@ color:#444;
 
 Generate Employee QR Code
 
-    async function downloadQR(){
-
-    if(!currentPerson){
-
-        alert("Generate QR first.");
-
-        return;
-
-    }
-
-    const qrCanvas=document.querySelector("#qrArea canvas");
-
-    if(!qrCanvas){
-
-        alert("QR image not found.");
-
-        return;
-
-    }
-
-    const finalCanvas=document.createElement("canvas");
-
-    finalCanvas.width=400;
-
-    finalCanvas.height=500;
-
-    const ctx=finalCanvas.getContext("2d");
-
-    // Background
-    ctx.fillStyle="#FFFFFF";
-    ctx.fillRect(0,0,400,500);
-
-    // QR
-    ctx.drawImage(qrCanvas,60,20,280,280);
-
-    // Name
-    ctx.textAlign="center";
-    ctx.fillStyle="#003366";
-    ctx.font="bold 24px Arial";
-    ctx.fillText(currentPerson.Name,200,345);
-
-    // Company
-    ctx.fillStyle="#666666";
-    ctx.font="18px Arial";
-    ctx.fillText(currentPerson["Company Name"] || "",200,375);
-
-    // ID
-    ctx.fillStyle="#000000";
-    ctx.font="bold 18px Arial";
-    ctx.fillText(currentPerson.ID,200,405);
-
-    // Download
-    const link=document.createElement("a");
-
-    link.download=currentPerson.ID+".png";
-
-    link.href=finalCanvas.toDataURL("image/png");
-
-    document.body.appendChild(link);
-
-    link.click();
-
-    document.body.removeChild(link);
-
-}
-
-</script>
-
-</body>
-
-</html>
 </div>
 
 <input
@@ -384,3 +313,75 @@ alert("Unable to load employee details.");
 }
 
 }
+
+    async function downloadQR(){
+
+    if(!currentPerson){
+
+        alert("Generate QR first.");
+
+        return;
+
+    }
+
+    const qrCanvas=document.querySelector("#qrArea canvas");
+
+    if(!qrCanvas){
+
+        alert("QR image not found.");
+
+        return;
+
+    }
+
+    const finalCanvas=document.createElement("canvas");
+
+    finalCanvas.width=400;
+
+    finalCanvas.height=500;
+
+    const ctx=finalCanvas.getContext("2d");
+
+    // Background
+    ctx.fillStyle="#FFFFFF";
+    ctx.fillRect(0,0,400,500);
+
+    // QR
+    ctx.drawImage(qrCanvas,60,20,280,280);
+
+    // Name
+    ctx.textAlign="center";
+    ctx.fillStyle="#003366";
+    ctx.font="bold 24px Arial";
+    ctx.fillText(currentPerson.Name,200,345);
+
+    // Company
+    ctx.fillStyle="#666666";
+    ctx.font="18px Arial";
+    ctx.fillText(currentPerson["Company Name"] || "",200,375);
+
+    // ID
+    ctx.fillStyle="#000000";
+    ctx.font="bold 18px Arial";
+    ctx.fillText(currentPerson.ID,200,405);
+
+    // Download
+    const link=document.createElement("a");
+
+    link.download=currentPerson.ID+".png";
+
+    link.href=finalCanvas.toDataURL("image/png");
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+
+}
+
+</script>
+
+</body>
+
+</html>
