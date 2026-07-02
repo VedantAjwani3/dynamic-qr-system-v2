@@ -5,7 +5,7 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>TRL QR Generator</title>
 
@@ -31,7 +31,7 @@ max-width:520px;
 
 margin:auto;
 
-background:#fff;
+background:#ffffff;
 
 padding:25px;
 
@@ -45,7 +45,7 @@ text-align:center;
 
 h2{
 
-margin:0;
+margin-top:0;
 
 color:#003366;
 
@@ -53,11 +53,9 @@ color:#003366;
 
 .subtitle{
 
-margin-top:6px;
+color:#666;
 
 margin-bottom:20px;
-
-color:#666;
 
 }
 
@@ -69,9 +67,9 @@ padding:12px;
 
 font-size:18px;
 
-border-radius:6px;
-
 border:1px solid #bbb;
+
+border-radius:6px;
 
 margin-bottom:15px;
 
@@ -83,6 +81,10 @@ padding:12px 20px;
 
 font-size:16px;
 
+background:#003366;
+
+color:white;
+
 border:none;
 
 border-radius:6px;
@@ -90,10 +92,6 @@ border-radius:6px;
 cursor:pointer;
 
 margin:5px;
-
-background:#003366;
-
-color:white;
 
 }
 
@@ -105,7 +103,11 @@ background:#0055aa;
 
 #qrArea{
 
-margin-top:25px;
+margin-top:20px;
+
+display:flex;
+
+justify-content:center;
 
 }
 
@@ -115,19 +117,29 @@ font-size:24px;
 
 font-weight:bold;
 
-color:#003366;
-
 margin-top:15px;
+
+color:#003366;
 
 }
 
 #empCompany{
 
-font-size:17px;
+font-size:18px;
+
+margin-top:5px;
 
 color:#555;
 
+}
+
+#empID{
+
+font-size:16px;
+
 margin-top:5px;
+
+color:#444;
 
 }
 
@@ -143,14 +155,17 @@ margin-top:5px;
 
 <div class="subtitle">
 
-Employee QR Generator
+Generate Employee QR Code
 
 </div>
 
 <input
+
 type="text"
+
 id="empid"
-placeholder="Enter Employee ID (Example: TRL-001)">
+
+placeholder="Enter Employee ID">
 
 <br>
 
@@ -172,17 +187,18 @@ Download QR
 
 <div id="empCompany"></div>
 
+<div id="empID"></div>
+
 </div>
 
 <script>
 
 const sheetURL="https://script.google.com/macros/s/AKfycbz7i_0eSB34jsXN-r8aQurwulksa30ODpaEsM1LDESV4hbon8xEVLkSfVILZtQnTQ1fbA/exec";
 
-let qrCode;
+let qrCode=null;
 
 let currentPerson=null;
-
-async function generateQR(){
+    async function generateQR(){
 
 const id=document.getElementById("empid").value.trim();
 
@@ -199,6 +215,8 @@ document.getElementById("qrArea").innerHTML="";
 document.getElementById("empName").innerHTML="Loading...";
 
 document.getElementById("empCompany").innerHTML="";
+
+document.getElementById("empID").innerHTML="";
 
 try{
 
@@ -224,9 +242,12 @@ document.getElementById("empName").innerHTML=person.Name;
 
 document.getElementById("empCompany").innerHTML=person["Company Name"] || "";
 
-const qrLink="https://dynamic-qr-system-v2.vercel.app/profile.html?id="+encodeURIComponent(person.ID);
+document.getElementById("empID").innerHTML=person.ID;
+    const qrLink =
+"https://dynamic-qr-system-v2.vercel.app/profile.html?id=" +
+encodeURIComponent(person.ID);
 
-qrCode=new QRCodeStyling({
+qrCode = new QRCodeStyling({
 
 width:280,
 
@@ -236,7 +257,17 @@ type:"canvas",
 
 data:qrLink,
 
-margin:5,
+margin:10,
+
+imageOptions:{
+
+hideBackgroundDots:true,
+
+imageSize:0.4,
+
+margin:0
+
+},
 
 dotsOptions:{
 
@@ -272,25 +303,16 @@ qrCode.append(document.getElementById("qrArea"));
 
 }
 
-catch(err){
+catch(error){
 
-console.error(err);
+console.error(error);
 
-alert("Unable to connect to Google Sheet.");
-
-}
+alert("Unable to load employee details.");
 
 }
 
-async function downloadQR(){
-
-    if(!qrCode){
-
-        alert("Generate QR first.");
-
-        return;
-
-    }
+}
+    async function downloadQR(){
 
     if(!currentPerson){
 
@@ -300,13 +322,59 @@ async function downloadQR(){
 
     }
 
-    await qrCode.download({
+    const qrCanvas=document.querySelector("#qrArea canvas");
 
-        name: currentPerson.ID + "-" + currentPerson.Name,
+    if(!qrCanvas){
 
-        extension: "png"
+        alert("QR image not found.");
 
-    });
+        return;
+
+    }
+
+    const finalCanvas=document.createElement("canvas");
+
+    finalCanvas.width=400;
+
+    finalCanvas.height=500;
+
+    const ctx=finalCanvas.getContext("2d");
+
+    // Background
+    ctx.fillStyle="#FFFFFF";
+    ctx.fillRect(0,0,400,500);
+
+    // QR
+    ctx.drawImage(qrCanvas,60,20,280,280);
+
+    // Name
+    ctx.textAlign="center";
+    ctx.fillStyle="#003366";
+    ctx.font="bold 24px Arial";
+    ctx.fillText(currentPerson.Name,200,345);
+
+    // Company
+    ctx.fillStyle="#666666";
+    ctx.font="18px Arial";
+    ctx.fillText(currentPerson["Company Name"] || "",200,375);
+
+    // ID
+    ctx.fillStyle="#000000";
+    ctx.font="bold 18px Arial";
+    ctx.fillText(currentPerson.ID,200,405);
+
+    // Download
+    const link=document.createElement("a");
+
+    link.download=currentPerson.ID+".png";
+
+    link.href=finalCanvas.toDataURL("image/png");
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
 
 }
 
